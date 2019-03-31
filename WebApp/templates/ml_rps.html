@@ -1,0 +1,117 @@
+<html>
+    {% load static %}
+    <head>
+    <title>WebApp</title>
+    <script src="{% static 'JQuery/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    </head>
+    <style>
+        body{
+            background-color: aliceblue;
+        }
+        div.top-bar{
+            height: 100px;
+            background-color: cadetblue;
+            border-bottom: 1px solid black;
+            position: relative;
+        }
+        .center-text{
+            text-align: center;
+        }
+        .main-container{
+            min-width: 500px;
+            width: 50%;
+            margin-top: 200px;
+            background-color: cadetblue;
+            border: 1px solid black;
+            margin-left: 25%;
+        }
+        .bot-space{
+            margin-bottom: 100px;
+        }
+        .container{
+            position: relative;
+            width: 70%;
+            margin: 0 auto;
+            margin-bottom: 100px;
+        }
+    </style>
+    <body>
+        <div class="top-bar">
+        
+        </div>
+        <div class="main-container">
+            <h1 class="center-text">Rock Paper Scissors</h1>
+            <hr class="bot-space">
+            <div class="container">
+                <center>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>Nr. of simulations</td>
+                            <td>
+                                500
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Reset model</td>
+                            <td>
+                                <button type="button">Reset</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Who goes first?</td>
+                            <td>
+                                <select id="turn_order">
+                                    <option value="human">Human</option>
+                                    <option value="computer">Computer</option>
+                                    <option value="both">Both</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Human Choice</td>
+                            <td>
+                                <select id="human_choice">
+                                    <option value="0">Rock</option>
+                                    <option value="1">Paper</option>
+                                    <option value="2">Scissors</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <button type="button" id="play_game_btn">Go</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Result</td>
+                            <td>
+                                
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                </center>
+            </div>
+        </div>
+    </body>
+    <script src="{% static 'js/ajax.js' %}">
+        
+    </script>
+    <script>
+        let human_choice = document.getElementById('human_choice');
+        let turn_order = document.getElementById('turn_order');
+        let data_provider = new Data_Provider('/MachineLearning/RPS');
+        document.getElementById('play_game_btn').onclick = function(){
+            let args = {
+                'action':'play',
+                'human_c':human_choice.value,
+                'turn_order':turn_order.value,
+            }
+            data_provider.ajax_request(args)
+        }
+    </script>
+</html>

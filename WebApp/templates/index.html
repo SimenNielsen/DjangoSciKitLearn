@@ -26,6 +26,12 @@
         .bot-space{
             margin-bottom: 100px;
         }
+        .list-container{
+            position: relative;
+            width: 70%;
+            margin: 0 auto;
+            margin-bottom: 100px;
+        }
     </style>
     <body>
         <div class="top-bar">
@@ -34,8 +40,21 @@
         <div class="main-container">
             <h1 class="center-text">WebApp</h1>
             <hr class="bot-space">
-            <div>
-                
+            <div class="list-container">
+                <h2>sklearn-kit</h2>
+                <hr>
+                <ul>
+                    <li>
+                        Simple
+                        <ul>
+                            <li>
+                                <a href="{% url 'WebApp:ml-rps' %}">
+                                    Rock Paper Scissors
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
         </div>
     </body>
