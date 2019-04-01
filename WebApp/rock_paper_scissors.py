@@ -9,7 +9,7 @@ from sklearn import datasets
 
 # Computer num, player num, result (Even, Win(Computer), Lost(Computer))
 def generate_first():
-    num_games = 1
+    num_games = 500
     dataset = np.random.random_integers(0,2,num_games*2)
     dataset.shape = (num_games, 2)
     results = []
@@ -38,12 +38,11 @@ def play_RPS(turn_order,human_choice):
     data_path = 'sklearn/data/rps.csv'
     try:
         dataset = np.loadtxt(data_path, delimiter=',', dtype='int')
-        print(int(len(dataset)/3))
         dataset.shape = (int(len(dataset/3)), 3)
         print('reading from file')
     except:
         dataset = generate_first()
-        dataset.shape = (1, 3)
+        dataset.shape = (int(len(dataset/3)), 3)
         print('generating')
     knn = KNeighborsClassifier(n_neighbors=1)
     if turn_order == 'human':
@@ -63,7 +62,7 @@ def play_RPS(turn_order,human_choice):
         prediction = knn.predict([[1]])[0]
     else:
         print('/////////////ERROR//////////////')
-    print(dataset)
     dataset = np.append(dataset, [[prediction, human_choice, process_game([prediction, human_choice])]], axis=0)
     np.savetxt(data_path, dataset.astype(int), fmt='%i', delimiter=",")
+    print(prediction)
     return prediction
