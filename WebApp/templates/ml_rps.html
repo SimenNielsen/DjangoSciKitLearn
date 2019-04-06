@@ -49,15 +49,15 @@
                 <table>
                     <tbody>
                         <tr>
-                            <td>Nr. of simulations</td>
+                            <td>Reset model</td>
                             <td>
-                                500
+                                <button type="button" id="reset_btn">Reset</button>
                             </td>
                         </tr>
                         <tr>
-                            <td>Reset model</td>
+                            <td>Train model</td>
                             <td>
-                                <button type="button">Reset</button>
+                                <button type="button" id="train_btn">Train</button>
                             </td>
                         </tr>
                         <tr>
@@ -80,6 +80,7 @@
                                 </select>
                             </td>
                         </tr>
+                        
                         <tr>
                             <td></td>
                             <td>
@@ -87,13 +88,43 @@
                             </td>
                         </tr>
                         <tr>
+                            <td>Computer Choice</td>
+                            <td>
+                                <input id="computer_choice" readonly>
+                            </td>
+                        </tr>
+                        <tr>
                             <td>Result</td>
                             <td>
-                                
+                                <h3 id="result"></h3>
                             </td>
                         </tr>
                     </tbody>
                 </table>
+                <hr>
+                    <h3 id="dataset_title">Dataset</h3>
+                    <div hidden style="max-height: 500px; overflow-y: scroll;" id="data_div">
+                        
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Computer Choice
+                                    </th>
+                                    <th>
+                                        Player Choice
+                                    </th>
+                                    <th>
+                                        Result
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="data_table">
+
+                            </tbody>
+                        </table>
+                    </div>
                 </center>
             </div>
         </div>
@@ -111,7 +142,76 @@
                 'human_c':human_choice.value,
                 'turn_order':turn_order.value,
             }
-            data_provider.ajax_request(args)
+            data_provider.ajax_request(args, processPlayResponse)
+        }
+        document.getElementById('reset_btn').onclick = function(){
+            let args = {
+                'action':'reset',
+            }
+            data_provider.ajax_request(args, print_dataset)
+        }
+        document.getElementById('train_btn').onclick = function(){
+            let args = {
+                'action':'train',
+            }
+            data_provider.ajax_request(args, print_dataset)
+        }
+        
+        function processPlayResponse(data){
+            console.log(data);
+            let computer_choice = undefined;
+            switch(data.prediction){
+                case 0:
+                    computer_choice = "Rock";
+                    break;
+                case 1:
+                    computer_choice = "Paper";
+                    break;
+                case 2:
+                    computer_choice = "Scissors";
+                    break;
+                default:
+                    computer_choice = "Error";
+                    break;
+            }
+            document.getElementById("computer_choice").value = computer_choice;
+            let result = undefined;
+            switch(data.result){
+                case 0:
+                    result = "Even";
+                    break;
+                case 1:
+                    result = "Computer Wins";
+                    break;
+                case 2:
+                    result = "Player Wins";
+                    break;
+                default:
+                    result = "Error";
+                    break;
+            }
+            document.getElementById("result").textContent = result;
+            print_dataset(data);
+        }
+        
+        function print_dataset(data){
+            let data_table = document.getElementById("data_table");
+            data_table.innerHTML = "";
+            for(let i = 0; i < data.data.length; i++){
+                let row = document.createElement("tr");
+                let cc = document.createElement("td");
+                let pc = document.createElement("td");
+                let r = document.createElement("td");
+                cc.textContent = data.data[i][0];
+                pc.textContent = data.data[i][1];
+                r.textContent = data.data[i][2];
+                row.appendChild(cc);
+                row.appendChild(pc);
+                row.appendChild(r);
+                data_table.appendChild(row);
+            }
+            document.getElementById('dataset_title').textContent = "Dataset ("+data.data.length+")";
+            document.getElementById('data_div').hidden = false;
         }
     </script>
 </html>

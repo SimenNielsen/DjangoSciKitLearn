@@ -7,9 +7,10 @@ from joblib import dump, load
 import numpy as np
 from sklearn import datasets
 
+data_path = 'sklearn/data/rps.csv'
 # Computer num, player num, result (Even, Win(Computer), Lost(Computer))
-def generate_first():
-    num_games = 500
+def generate_first(num):
+    num_games = num
     dataset = np.random.random_integers(0,2,num_games*2)
     dataset.shape = (num_games, 2)
     results = []
@@ -34,16 +35,8 @@ def process_game(data):
     return None
 
 def play_RPS(turn_order,human_choice):
-    human_choice = int(human_choice)
-    data_path = 'sklearn/data/rps.csv'
-    try:
-        dataset = np.loadtxt(data_path, delimiter=',', dtype='int')
-        dataset.shape = (int(len(dataset/3)), 3)
-        print('reading from file')
-    except:
-        dataset = generate_first()
-        dataset.shape = (int(len(dataset/3)), 3)
-        print('generating')
+    human_choice = human_choice
+    dataset = get_RPS_data()
     knn = KNeighborsClassifier(n_neighbors=1)
     if turn_order == 'human':
         X = dataset[:,1:3] 
@@ -63,6 +56,21 @@ def play_RPS(turn_order,human_choice):
     else:
         print('/////////////ERROR//////////////')
     dataset = np.append(dataset, [[prediction, human_choice, process_game([prediction, human_choice])]], axis=0)
-    np.savetxt(data_path, dataset.astype(int), fmt='%i', delimiter=",")
+    save_RPS_data(dataset)
+    
     print(prediction)
     return prediction
+
+def get_RPS_data():
+    try:
+        dataset = np.loadtxt(data_path, delimiter=',', dtype='int')
+        dataset.shape = (int(len(dataset/3)), 3)
+        print('reading from file')
+    except:
+        dataset = generate_first(100)
+        dataset.shape = (int(len(dataset/3)), 3)
+        print('generating')
+    return dataset
+
+def save_RPS_data(dataset):
+    np.savetxt(data_path, dataset.astype(int), fmt='%i', delimiter=",")

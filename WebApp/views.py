@@ -16,8 +16,30 @@ def ML_RPS(request):
         if request.POST.get('action') == 'play':
             human_choice = request.POST.get('human_c')
             turn_order = request.POST.get('turn_order') #0=computer,1=player,2=both
-            response = play_RPS(turn_order,human_choice)
+            prediction = play_RPS(turn_order,int(human_choice))
+            data = get_RPS_data()
             #return HttpResponse(json.dumps(response), content_type='application/json')
-            return HttpResponse(json.dumps({'response':'test'}), content_type='application/json')
+            return HttpResponse(json.dumps(
+                {
+                    'prediction':int(prediction), 
+                    'result':process_game([int(prediction), int(human_choice)]),
+                    'data':data.tolist(),
+                }), content_type='application/json')
+        elif request.POST.get('action') == 'reset':
+            dataset = generate_first(2)
+            save_RPS_data(dataset)
+            data = get_RPS_data()
+            return HttpResponse(json.dumps(
+                {
+                    'data':data.tolist(),
+                }), content_type='application/json')
+        elif request.POST.get('action') == 'train':
+            dataset = generate_first(500)
+            save_RPS_data(dataset)
+            data = get_RPS_data()
+            return HttpResponse(json.dumps(
+                {
+                    'data':data.tolist(),
+                }), content_type='application/json')
         else:
             return None
