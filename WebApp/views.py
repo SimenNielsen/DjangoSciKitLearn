@@ -50,6 +50,7 @@ def ML_TTT(request):
     if request.method == 'GET':
         return render(request, 'ml_ttt.html')
     else:
+        ttt = TTT()
         if request.POST.get('action') == 'play':
             history = request.POST.get('history')
             
@@ -71,12 +72,10 @@ def ML_TTT(request):
                     'data':data.tolist(),
                 }), content_type='application/json')
         elif request.POST.get('action') == 'train':
-            dataset = generate_first(500)
-            save_RPS_data(dataset)
-            data = get_RPS_data()
+            ttt.train(100000)
             return HttpResponse(json.dumps(
                 {
-                    'data':data.tolist(),
+                    'data':'data.tolist()',
                 }), content_type='application/json')
         else:
             return None
